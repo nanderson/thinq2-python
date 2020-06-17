@@ -2,6 +2,7 @@
 import os
 import json
 import signal
+import paho.mqtt.publish as publish
 
 from thinq2.controller.auth import ThinQAuth
 from thinq2.controller.thinq import ThinQ
@@ -76,6 +77,7 @@ for device in devices.items:
 
 print("\nListening for device events. Use Ctrl-C/SIGINT to quit.\n")
 
-thinq.mqtt.on_message = lambda client, userdata, msg: print(msg.payload)
+#thinq.mqtt.on_message = lambda client, userdata, msg: print(msg.payload.decode())
+thinq.mqtt.on_message = lambda client, userdata, msg: publish.single(topic="SENSOR/thinq2", payload=msg.payload.decode(), hostname="nas5", port=1883, retain=False, qos=0)
 thinq.mqtt.connect()
 thinq.mqtt.loop_forever()
